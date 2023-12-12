@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/logging")
 public class LogsController {
@@ -17,20 +18,31 @@ public class LogsController {
     LogsService logsService;
 
     @GetMapping("/get-all")
-    private List<Logs> getAllLogs(){
+    public List<Logs> getAllLogs(){
         return logsService.getAllLogs();
     }
 
     @PostMapping("/add")
-    private boolean addLog(@RequestBody LogsDTO logsDTO){
+    public boolean addLog(@RequestBody LogsDTO logsDTO){
 
         boolean response = logsService.addLogs(logsDTO);
         return response;
     }
 
     @GetMapping("/registeredUsers")
-    private long countRegisteredUsers(){
+    public long countRegisteredUsers(){
         List<Logs> listOfUsers =  logsService.findDistinctUsersByEventType("login");
+        return listOfUsers.size();
+    }
+
+    @GetMapping("/distinctUsersForEachServiceApp")
+    public Map<String, Long> getDistinctUsersForEachServiceApp() {
+        return logsService.findDistinctUsersForEachServiceApp();
+    }
+
+    @GetMapping("/registeredUsers/{serviceApp}")
+    public long getDistinctUsersForServiceApp(@PathVariable String serviceApp) {
+        List<Logs> listOfUsers = logsService.findDistinctUsersForServiceApp(serviceApp);
         return listOfUsers.size();
     }
 

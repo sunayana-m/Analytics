@@ -20,7 +20,7 @@ public class Logs {
     private String id;
 
     private String userId;
-    private String eventType;    //like,comment,login,downvote,upvote,logout,follow,unfollow,addFriend,removeFriend,imgPost,vidPost
+    private String eventType;    //like,comment,login,downvote,upvote,follow,unfollow,addFriend,removeFriend,imgPost,vidPost
 
     @Field(targetType = FieldType.DATE_TIME)
     private LocalDateTime timestamp;

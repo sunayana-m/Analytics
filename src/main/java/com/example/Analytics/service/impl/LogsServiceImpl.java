@@ -4,6 +4,7 @@ import com.example.Analytics.dto.LogsDTO;
 import com.example.Analytics.entity.Logs;
 import com.example.Analytics.repository.LogsRepository;
 import com.example.Analytics.service.LogsService;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,9 +33,28 @@ public class LogsServiceImpl implements LogsService {
         return Objects.nonNull(savedLog);
     }
 
-    @Override
+    @Override   //global - to find distinct users registered , evevntType=login
     public List<Logs> findDistinctUsersByEventType(String eventType) {
         return logsRepository.findDistinctUsersByEventType(eventType);
+    }
+
+    @Override   //find no of distinct users registered on a specified service app
+    public List<Logs> findDistinctUsersForServiceApp(String serviceApp) {
+        return logsRepository.findDistinctUsersForServiceApp(serviceApp);
+    }
+
+    @Override   //global - find number of distinct users for each service app
+    public Map<String, Long> findDistinctUsersForEachServiceApp() {
+        List<Logs> usersLogs = logsRepository.findDistinctUsersForEachServiceApp();
+
+        // Count occurrences of each category for the specified eventType
+        Map<String, Long> usersCounts = usersLogs.stream()
+                .collect(Collectors.groupingBy(Logs::getServiceApp, Collectors.counting()));
+
+        // Sort the categories by count in descending order
+        return usersCounts.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
 
     @Override
@@ -48,7 +68,7 @@ public class LogsServiceImpl implements LogsService {
         // Sort the categories by count in descending order
         return categoryCounts.entrySet().stream()
                 .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
 
 
@@ -92,4 +112,6 @@ public class LogsServiceImpl implements LogsService {
                 .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
+
+
 }

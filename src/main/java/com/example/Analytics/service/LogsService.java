@@ -14,6 +14,12 @@ public interface LogsService {
 
     List<Logs> findDistinctUsersByEventType(String eventType);
 
+
+    List<Logs> findDistinctUsersForServiceApp(String serviceApp);
+
+    //global - find number of distinct users for each service app
+    Map<String, Long> findDistinctUsersForEachServiceApp();
+
     Map<String, Long> findEventCountForCategories(String eventType);
 
     Map<String, Long> findPopularCategoriesForLikes();

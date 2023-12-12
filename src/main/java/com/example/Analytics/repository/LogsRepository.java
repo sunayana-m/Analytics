@@ -13,6 +13,12 @@ public interface LogsRepository extends MongoRepository<Logs,String> {
     @Query("{'eventType': ?0}")
     List<Logs> findDistinctUsersByEventType(String eventType);
 
+    //registered users for param service app
+    @Query("{'eventType': 'login', 'serviceApp': ?0}")
+    List<Logs> findDistinctUsersForServiceApp(String serviceApp);
+
+
+    //count of event type
     @Query("{'eventType': { $ne: null }, 'serviceApp': ?0  }")
     List<Logs> findLogsByEventTypeForServiceApp(String serviceApp);
 
@@ -26,5 +32,10 @@ public interface LogsRepository extends MongoRepository<Logs,String> {
 
     @Query("{'eventType': 'like', 'category': { $ne: null } }")
     List<Logs> findLikesWithCategories();
+
+
+    //distinct users for each service app
+    @Query(value = "{'eventType': 'login'}", fields = "{ 'username': 1, 'serviceApp': 1 }")
+    List<Logs> findDistinctUsersForEachServiceApp();
 
 }
